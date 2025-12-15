@@ -31,6 +31,36 @@
         }
 
         //get all the mssages of the user 
+        //create a methode called GETNOTIFICAtiONs
+        //get the userid
+        [HttpGet("{userId}")]
+        public IActionResult GetNotifications(string userId){
+            var notifications = _notificationService.GetNotifications(userId);
+            return Ok(notifications);
+        }
+
+        [HttpPost("{notificationId}/read")]
+        public IActionResult MarkAsRead(string notificationId){
+            var notification =_notificationService.GetNotifications(userId);
+            return Ok(notification);
+        }
+
+        [HttpPost("{userId}/read-all")]
+        public IActionResult MarkAllAsRead(string userId)
+        {
+            _notificationService.MarkAllAsRead(userId);
+            return Ok();
+        }
+
+        [HttpGet("{userId}/unread-count")]
+        public IActionResult GetUnreeadCount(string userId){
+            var count =_notificationService.GetUnreadCount(user);
+            //“Ask the NotificationService to count how many unread notifications this user has.”
+            //_notificationService → the object that contains all the notification logic
+            return Ok(new {count});
+        }
+
+    
 
 
 
