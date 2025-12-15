@@ -38,6 +38,49 @@ namespace NotificationApi.Services{
         _hubcontext = hubContext;
     }
     
+    //needs to create a onject and sent it using SignR
+    public async Task<Notification> SnedNotificationAsync(SendNotificationRequest request){ //this fuction sneds a notification
+        var notification = new Notification {
+
+            // this makes a new notification
+            //using the data that resived form signr
+            UserId = request.UserId ?? "all",
+            Title = request.Title,
+            Message = request.Message,
+            Type = request.Type 
+        };
+
+        _notifications.Add(notification); //save it 
+
+
+
+        //needs tp send it to spesific user 
+        //or you can broadcast it to everyone
+        if(string.IsNullOrEmpty(request.UserId) || request.UserId == "all" ){
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+        } else {
+            await _hubContext.Clients.Group(request.UserId).SendAsync("ReceiveNotificcation" ,notification);
+        }
+
+        return notification; // give  the notification as a notification
+        //if chackes if its sends to all or 
+    }
+
+    //needs to mark all the notification as read
+    public void MarkAllAsRead(string userId){
+        var userNotifications = _notifications.Where(n => n.UserId || n.UserId == "all");
+        foreach(var notification in userNotifications){
+            notification.isRead = true;
+        }
+    }
+
+    //get the current number of the unread count 
+    public int GetUnreadCount(string UserId){
+        return _notifications.Count(n => ! n.isRead && (n.userId || n.UserId == "all")
+        );
+
+    }
+
 
 
 
