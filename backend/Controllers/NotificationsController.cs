@@ -6,10 +6,10 @@
 
     //this class only for oruting so add apicontroler keyworf
     [ApiController]
-    [Router("api/[ccontroller]")]
+    [Route("api/[controller]")]
 
     public class NotificationsController:ControllerBase{
-        //“This controller uses NotificationService to do all notification work.”
+        //"This controller uses NotificationService to do all notification work."
         private readonly NotificationService _notificationService;
         
         
@@ -21,8 +21,8 @@
             _notificationService = notificationService;
         }
 
-        [httpPost("send")]
-        public async Task<IActionResult> SendNotification([Frombody] SendNotificationRequest request){
+        [HttpPost("send")]
+        public async Task<IActionResult> SendNotification([FromBody] SendNotificationRequest request){
             //formbody mean The data I need is in the BODY of the HTTP request"
             //sendnotificationreq is the json object i made in servises 
             //request is the variable it is put on
@@ -41,7 +41,7 @@
 
         [HttpPost("{notificationId}/read")]
         public IActionResult MarkAsRead(string notificationId){
-            var notification =_notificationService.GetNotifications(userId);
+            var notification =_notificationService.MarkAsRead(notificationId);
             return Ok(notification);
         }
 
@@ -54,8 +54,8 @@
 
         [HttpGet("{userId}/unread-count")]
         public IActionResult GetUnreeadCount(string userId){
-            var count =_notificationService.GetUnreadCount(user);
-            //“Ask the NotificationService to count how many unread notifications this user has.”
+            var count =_notificationService.GetUnreadCount(userId);
+            //"Ask the NotificationService to count how many unread notifications this user has."
             //_notificationService → the object that contains all the notification logic
             return Ok(new {count});
         }

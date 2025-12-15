@@ -3,12 +3,13 @@ namespace NotificationApi.Models
     public class Notification
     {
         public string Id { get; set;} = Guid.NewGuid().ToString(); //Guid.NewGuid() generates a globally unique ID
-        public string Userid {get;set;} =string.Empty;
+        public string UserId {get;set;} =string.Empty;
         public string Title {get;set;} =string.Empty;
-        public string Massage {get;set;} = string.Empty;
+        public string Message {get;set;} = string.Empty;
 
-        public string IsReead {get;set;} = fulse;
-        public DeateTime CreatedAt {get;set;} =DateTime.UtcNow;
+        public bool isRead {get;set;} = false;
+        public DateTime CreatedAt {get;set;} =DateTime.UtcNow;
+        public NotificationType Type {get;set;} = NotificationType.info;
 
         //add the eneum for the notification type call it here
         //below make it and call it here 
@@ -18,9 +19,10 @@ namespace NotificationApi.Models
 
 public class SendNotificationRequest
 {
-    public string? USerId{get;set;} 
+    public string? UserId{get;set;} 
     public string Title{get;set;} =string.Empty;
     public string Message {get;set;}=string.Empty;
+    public NotificationType Type {get;set;} = NotificationType.info;
     
     //call the eneum here 
 }

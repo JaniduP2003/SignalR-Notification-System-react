@@ -35,11 +35,11 @@ namespace NotificationApi.Services{
     //A constructor is a special method that runs when you create a new object of the class.
     // and pass a peramter 
     public NotificationService(IHubContext<NotificationHub> hubContext){
-        _hubcontext = hubContext;
+        _hubContext = hubContext;
     }
     
     //needs to create a onject and sent it using SignR
-    public async Task<Notification> SnedNotificationAsync(SendNotificationRequest request){ //this fuction sneds a notification
+    public async Task<Notification> SendNotificationAsync(SendNotificationRequest request){ //this fuction sneds a notification
         var notification = new Notification {
 
             // this makes a new notification
@@ -68,7 +68,7 @@ namespace NotificationApi.Services{
 
     //needs to mark all the notification as read
     public void MarkAllAsRead(string userId){
-        var userNotifications = _notifications.Where(n => n.UserId || n.UserId == "all");
+        var userNotifications = _notifications.Where(n => n.UserId == userId || n.UserId == "all");
         foreach(var notification in userNotifications){
             notification.isRead = true;
         }
@@ -76,9 +76,23 @@ namespace NotificationApi.Services{
 
     //get the current number of the unread count 
     public int GetUnreadCount(string UserId){
-        return _notifications.Count(n => ! n.isRead && (n.userId || n.UserId == "all")
+        return _notifications.Count(n => ! n.isRead && (n.UserId == UserId || n.UserId == "all")
         );
 
+    }
+
+    //get all notifications for a user
+    public List<Notification> GetNotifications(string userId){
+        return _notifications.Where(n => n.UserId == userId || n.UserId == "all").ToList();
+    }
+
+    //mark a specific notification as read
+    public Notification? MarkAsRead(string notificationId){
+        var notification = _notifications.FirstOrDefault(n => n.Id == notificationId);
+        if(notification != null){
+            notification.isRead = true;
+        }
+        return notification;
     }
 
 
