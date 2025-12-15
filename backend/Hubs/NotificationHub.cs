@@ -16,19 +16,49 @@ namespace NotificationApi.Hubs {
 
         public override async Task OnconnectedAsync(){
         //gole is User 123 connected with connection ID: abcXYZ
+            var userId = context.GetHttpContext()?.request.Query["userId"].ToString();
+            //Request.Query["userId"] reads form url  /notificationHub?userId=123
+            //now chack of the user id is valid 
+            if(!string.IsNullOrEmpty(userId)){
+                await Groups.AddToGroupAsync(Context. ConnectionId , userId);
+                //groups A built-in SignalR group manager CANT do Add connections to groups Remove connections from groups
+                console.WriteLine($"User{userId} connceted with connection it of :{Context.ConnectionId}");
+            }
+
+            await base.OnConnectedAsync();
+            //tells “After my custom connection logic, let SignalR run its own default connection logic.”
+            //(await)Waits for the base method to finish (base)Refers to the parent class
+
 
         }
 
         public override async Task OnDisconnectedAsync(){
             // do this my implementation when discinected 
+            var userId = context.GetHttpContext()?.request.Query["userId"].ToString();
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, userId);
+                Console.WriteLine($"User {userId} disconnected");
+            }
+            
+            await base.OnDisconnectedAsync(exception);
+
         }
 
         public  async Task MarkAsRead(){
+            // need to say Send a real-time message to all connected devices of a specific 
+            // user saying “this notification was read”.
+            //"NotificationMarkedAsRead" Event name (string)
+            await Clients.Group(userId).SendAsync("NotificationMarkedAsRead",notificationId);
+            //This line pushes a real-time “notification read” event to every active device of a specific user.
 
         }
 
         public async Task MarkAllAsRead(string userId){
-            
+        //This line broadcasts a “clear all notifications” event to every active device of a specific user in real time.
+        await Clinets.Group(userId).SendAsync("AllNofificetionsMarkedAsRead");
+
         }
 
     }
