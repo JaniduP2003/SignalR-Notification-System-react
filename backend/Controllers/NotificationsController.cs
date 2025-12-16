@@ -40,15 +40,15 @@
         }
 
         [HttpPost("{notificationId}/read")]
-        public IActionResult MarkAsRead(string notificationId){
-            var notification =_notificationService.MarkAsRead(notificationId);
+        public async Task<IActionResult> MarkAsRead(string notificationId){
+            var notification = await _notificationService.MarkAsReadAsync(notificationId);
             return Ok(notification);
         }
 
         [HttpPost("{userId}/read-all")]
-        public IActionResult MarkAllAsRead(string userId)
+        public async Task<IActionResult> MarkAllAsRead(string userId)
         {
-            _notificationService.MarkAllAsRead(userId);
+            await _notificationService.MarkAllAsReadAsync(userId);
             return Ok();
         }
 

@@ -42,6 +42,17 @@ export const useSignalR = () => {
               ...prev,
             ]);
           });
+          // When another client marks a notification as read, update local state
+          connection.on('NotificationMarkedAsRead', (notificationId: string) => {
+            console.log('NotificationMarkedAsRead event:', notificationId);
+            setNotifications((prev) => prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)));
+          });
+
+          // When another client marks all as read
+          connection.on('AllNofificetionsMarkedAsRead', () => {
+            console.log('AllNofificetionsMarkedAsRead event received');
+            setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+          });
           // Fetch existing notifications for this user so all tabs start with the same state
           (async () => {
             try {
@@ -79,13 +90,37 @@ export const useSignalR = () => {
   }, [connection]);
 
   const markAsRead = useCallback((id: string) => {
+    // Optimistically update local state
     setNotifications((prev) =>
       prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif))
     );
+
+    // Notify backend so it updates storage and broadcasts to other tabs
+    (async () => {
+      try {
+        const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/notifications';
+        const res = await fetch(`${apiBase}/${encodeURIComponent(id)}/read`, { method: 'POST' });
+        if (!res.ok) console.warn('Failed to mark as read on server', res.status);
+      } catch (err) {
+        console.warn('Error marking as read', err);
+      }
+    })();
   }, []);
 
   const markAllAsRead = useCallback(() => {
     setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })));
+
+    // Tell the backend to mark all as read and broadcast
+    (async () => {
+      try {
+        const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/notifications';
+        const userId = 'all';
+        const res = await fetch(`${apiBase}/${encodeURIComponent(userId)}/read-all`, { method: 'POST' });
+        if (!res.ok) console.warn('Failed to mark all as read on server', res.status);
+      } catch (err) {
+        console.warn('Error marking all as read', err);
+      }
+    })();
   }, []);
 
   const clearNotification = useCallback((id: string) => {

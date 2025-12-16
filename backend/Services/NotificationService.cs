@@ -67,10 +67,17 @@ namespace NotificationApi.Services{
     }
 
     //needs to mark all the notification as read
-    public void MarkAllAsRead(string userId){
+    public async Task MarkAllAsReadAsync(string userId){
         var userNotifications = _notifications.Where(n => n.UserId == userId || n.UserId == "all");
         foreach(var notification in userNotifications){
             notification.isRead = true;
+        }
+
+        // Notify all connected clients for this user that all notifications were marked as read
+        if(string.IsNullOrEmpty(userId) || userId == "all"){
+            await _hubContext.Clients.All.SendAsync("AllNofificetionsMarkedAsRead");
+        } else {
+            await _hubContext.Clients.Group(userId).SendAsync("AllNofificetionsMarkedAsRead");
         }
     }
 
@@ -87,10 +94,18 @@ namespace NotificationApi.Services{
     }
 
     //mark a specific notification as read
-    public Notification? MarkAsRead(string notificationId){
+    public async Task<Notification?> MarkAsReadAsync(string notificationId){
         var notification = _notifications.FirstOrDefault(n => n.Id == notificationId);
         if(notification != null){
             notification.isRead = true;
+
+            // Broadcast read event to the relevant user group or all clients
+            var targetUser = string.IsNullOrEmpty(notification.UserId) ? "all" : notification.UserId;
+            if(targetUser == "all"){
+                await _hubContext.Clients.All.SendAsync("NotificationMarkedAsRead", notificationId);
+            } else {
+                await _hubContext.Clients.Group(targetUser).SendAsync("NotificationMarkedAsRead", notificationId);
+            }
         }
         return notification;
     }
