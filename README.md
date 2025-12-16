@@ -361,7 +361,7 @@ builder.WithOrigins("http://localhost:3000", "https://your-domain.com")
 ### 1. Main Application Interface
 
 ![Application Home](Screenshots/1.png)
-_Clean and modern home page with notification bell icon and test panel for creating notifications._
+_SignalR dashbord in Azure_
 
 ### 2. Real-time Notification Toast
 
