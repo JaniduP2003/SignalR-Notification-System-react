@@ -8,7 +8,12 @@ builder.WebHost.UseUrls("http://localhost:8080");
 
 //configer all thats needed the services
 //need to add services to the container 
-builder.Services.AddControllers(); // this adds the curd code like Httpget in controlers
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Convert enums to strings instead of numbers in JSON
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    }); // this adds the curd code like Httpget in controlers
 //below are for swagger so it can see the enepoints
 builder.Services.AddEndpointsApiExplorer();
 //add swagger
@@ -22,7 +27,13 @@ builder.Services.AddSingleton<NotificationService>();
 // add sigenalR for that it need to read the connection string in the appsettings.json
 var signalRConnectionString =builder.Configuration["Azure:SignalR:connectionString"];
 //lets register this  use the above var 
-builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options =>
+    {
+        // Convert enums to strings in SignalR messages too
+        options.PayloadSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    })
+    .AddAzureSignalR(signalRConnectionString);
 
 // add cores for the forntned
 builder.Services.AddCors(options => {

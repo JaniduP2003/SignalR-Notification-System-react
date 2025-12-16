@@ -30,14 +30,28 @@ export const useSignalR = () => {
           setIsConnected(true);
 
           // Log incoming notifications so we can verify multi-tab delivery
-          connection.on('ReceiveNotification', (notification: Notification) => {
+          connection.on('ReceiveNotification', (notification: any) => {
             console.log('ReceiveNotification event received in tab:', { notification });
+
+            // Backend sends type as string enum name, normalize to lowercase
+            const normalizeType = (type: string | number): Notification['type'] => {
+              if (typeof type === 'string') {
+                return type.toLowerCase() as Notification['type'];
+              }
+              // Fallback for number enum (if backend config doesn't work)
+              const typeMap: { [key: number]: Notification['type'] } = {
+                0: 'info', 1: 'success', 2: 'warning', 3: 'error'
+              };
+              return typeMap[type] || 'info';
+            };
 
             setNotifications((prev) => [
               {
-                ...notification,
-                timestamp: new Date(notification.timestamp),
-                read: false,
+                id: notification.id,
+                message: notification.message,
+                type: normalizeType(notification.type),
+                timestamp: new Date(notification.createdAt),
+                read: !!notification.isRead,
               },
               ...prev,
             ]);
@@ -60,9 +74,24 @@ export const useSignalR = () => {
               const res = await fetch(`${apiBase}/${encodeURIComponent(userId)}`);
               if (res.ok) {
                 const data: any[] = await res.json();
+                
+                // Backend sends type as string enum name, normalize to lowercase
+                const normalizeType = (type: string | number): Notification['type'] => {
+                  if (typeof type === 'string') {
+                    return type.toLowerCase() as Notification['type'];
+                  }
+                  // Fallback for number enum
+                  const typeMap: { [key: number]: Notification['type'] } = {
+                    0: 'info', 1: 'success', 2: 'warning', 3: 'error'
+                  };
+                  return typeMap[type] || 'info';
+                };
+                
                 const mapped = data.map((n) => ({
-                  ...n,
-                  timestamp: new Date(n.createdAt || n.createdAt || n.createdAt),
+                  id: n.id,
+                  message: n.message,
+                  type: normalizeType(n.type),
+                  timestamp: new Date(n.createdAt),
                   read: !!n.isRead,
                 }));
                 setNotifications((prev) => {
