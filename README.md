@@ -44,6 +44,7 @@ This project demonstrates a production-ready implementation of real-time notific
 ## ✨ Features
 
 ### Core Functionality
+
 - ✅ **Real-time Notifications** - Instant delivery using SignalR WebSocket connections
 - ✅ **Multi-tab Synchronization** - Changes in one tab reflect in all open tabs
 - ✅ **Toast Notifications** - Non-intrusive popup alerts with auto-dismiss
@@ -54,6 +55,7 @@ This project demonstrates a production-ready implementation of real-time notific
 - ✅ **Connection Status** - Real-time connection indicator
 
 ### UI/UX Features
+
 - 🔔 Notification bell icon with unread badge counter
 - 📱 Sliding notification panel with smooth animations
 - 🧪 Test panel for creating sample notifications
@@ -64,6 +66,7 @@ This project demonstrates a production-ready implementation of real-time notific
 ## 🛠 Tech Stack
 
 ### Frontend
+
 - **[Next.js 16](https://nextjs.org/)** - React framework with App Router
 - **[React 19](https://reactjs.org/)** - Latest React with React Compiler
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
@@ -71,6 +74,7 @@ This project demonstrates a production-ready implementation of real-time notific
 - **[@microsoft/signalr](https://www.npmjs.com/package/@microsoft/signalr)** - SignalR client library
 
 ### Backend
+
 - **[ASP.NET Core 9](https://dotnet.microsoft.com/)** - Modern web framework
 - **[SignalR](https://dotnet.microsoft.com/apps/aspnet/signalr)** - Real-time communication library
 - **[Azure SignalR Service](https://azure.microsoft.com/services/signalr-service/)** - Scalable SignalR hosting
@@ -139,12 +143,14 @@ This project demonstrates a production-ready implementation of real-time notific
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/JaniduP2003/SignalR-Notification-System-react.git
    cd SignalR-Notification-System-react
    ```
 
 2. **Setup Backend**
+
    ```bash
    cd backend
    dotnet restore
@@ -152,6 +158,7 @@ This project demonstrates a production-ready implementation of real-time notific
    ```
 
 3. **Configure Azure SignalR** (optional)
+
    - Create an Azure SignalR Service instance
    - Copy the connection string
    - Update `appsettings.json`:
@@ -178,13 +185,16 @@ This project demonstrates a production-ready implementation of real-time notific
 ### Running the Application
 
 1. **Start the Backend** (Terminal 1)
+
    ```bash
    cd backend
    dotnet run
    ```
+
    Backend will run on `http://localhost:8080`
 
 2. **Start the Frontend** (Terminal 2)
+
    ```bash
    cd frontend
    npm run dev
@@ -193,6 +203,7 @@ This project demonstrates a production-ready implementation of real-time notific
    # or
    pnpm dev
    ```
+
    Frontend will run on `http://localhost:3000`
 
 3. **Open your browser**
@@ -248,17 +259,18 @@ SignalR-Notification-System-react/
 
 ### REST API
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/notifications` | Get all notifications |
-| `POST` | `/api/notifications` | Create a new notification |
-| `PUT` | `/api/notifications/{id}/read` | Mark notification as read |
-| `DELETE` | `/api/notifications/{id}` | Delete a notification |
-| `DELETE` | `/api/notifications/clear` | Clear all notifications |
+| Method   | Endpoint                       | Description               |
+| -------- | ------------------------------ | ------------------------- |
+| `GET`    | `/api/notifications`           | Get all notifications     |
+| `POST`   | `/api/notifications`           | Create a new notification |
+| `PUT`    | `/api/notifications/{id}/read` | Mark notification as read |
+| `DELETE` | `/api/notifications/{id}`      | Delete a notification     |
+| `DELETE` | `/api/notifications/clear`     | Clear all notifications   |
 
 ### Request/Response Examples
 
 **Create Notification**
+
 ```bash
 curl -X POST http://localhost:8080/api/notifications \
   -H "Content-Type: application/json" \
@@ -270,6 +282,7 @@ curl -X POST http://localhost:8080/api/notifications \
 ```
 
 **Response**
+
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -285,22 +298,22 @@ curl -X POST http://localhost:8080/api/notifications \
 
 ### Server → Client Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `ReceiveNotification` | `Notification` | New notification created |
-| `NotificationRead` | `string (id)` | Notification marked as read |
-| `NotificationCleared` | `string (id)` | Notification deleted |
-| `AllNotificationsCleared` | - | All notifications cleared |
+| Event                     | Payload        | Description                 |
+| ------------------------- | -------------- | --------------------------- |
+| `ReceiveNotification`     | `Notification` | New notification created    |
+| `NotificationRead`        | `string (id)`  | Notification marked as read |
+| `NotificationCleared`     | `string (id)`  | Notification deleted        |
+| `AllNotificationsCleared` | -              | All notifications cleared   |
 
 ### Client Implementation
 
 ```typescript
 // Subscribe to events
-connection.on('ReceiveNotification', (notification: Notification) => {
+connection.on("ReceiveNotification", (notification: Notification) => {
   // Handle new notification
 });
 
-connection.on('NotificationRead', (notificationId: string) => {
+connection.on("NotificationRead", (notificationId: string) => {
   // Handle notification marked as read
 });
 ```
@@ -345,7 +358,30 @@ builder.WithOrigins("http://localhost:3000", "https://your-domain.com")
 
 ## 📸 Screenshots
 
-*Add screenshots of your application here*
+### 1. Main Application Interface
+
+![Application Home](Screenshots/1.png)
+_Clean and modern home page with notification bell icon and test panel for creating notifications._
+
+### 2. Real-time Notification Toast
+
+![Toast Notification](Screenshots/2.png)
+_Non-intrusive toast notification popup that appears when a new notification is received in real-time._
+
+### 3. Notification Panel - Open View
+
+![Notification Panel](Screenshots/3.png)
+_Sliding notification panel showing all notifications with mark as read and clear functionality. Features unread indicators and action buttons._
+
+### 4. Multi-tab Synchronization
+
+![Multi-tab Sync](Screenshots/4.png)
+_console showing the console when you add a notification_
+
+### 5. Connected Status & Test Panel
+
+![Connection Status](Screenshots/5.png)
+_this is the console update when the other tab gets updated_
 
 ## 🧪 Testing
 
@@ -369,16 +405,19 @@ You can test with multiple clients by opening the app in multiple browser window
 ### Common Issues
 
 **SignalR Connection Failed**
+
 - Ensure backend is running on `http://localhost:8080`
 - Check CORS settings in `Program.cs`
 - Verify Azure SignalR connection string (if using)
 
 **Notifications Not Appearing**
+
 - Check browser console for errors
 - Verify SignalR connection is established (green indicator)
 - Ensure backend NotificationHub is registered
 
 **Port Already in Use**
+
 - Backend: Change port in `Program.cs` → `UseUrls("http://localhost:XXXX")`
 - Frontend: Run `npm run dev -- -p 3001` to use a different port
 
@@ -387,12 +426,14 @@ You can test with multiple clients by opening the app in multiple browser window
 ### Backend Deployment
 
 **Azure App Service**
+
 ```bash
 dotnet publish -c Release
 # Deploy to Azure App Service
 ```
 
 **Docker**
+
 ```dockerfile
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
@@ -403,12 +444,14 @@ ENTRYPOINT ["dotnet", "backend.dll"]
 ### Frontend Deployment
 
 **Vercel** (Recommended for Next.js)
+
 ```bash
 npm run build
 vercel --prod
 ```
 
 **Docker**
+
 ```dockerfile
 FROM node:20-alpine
 WORKDIR /app
@@ -436,6 +479,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👤 Author
 
 **Janidu Prasanga**
+
 - GitHub: [@JaniduP2003](https://github.com/JaniduP2003)
 
 ## 🙏 Acknowledgments
